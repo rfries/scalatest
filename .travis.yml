@@ -6,6 +6,9 @@ jdk:
   - oraclejdk7
   - openjdk6
   - oraclejdk8
+branch:
+  only:
+    - debug-travis
 env:
   #see https://github.com/scalatest/scalatest/pull/245
   #global values should be replaced using http://docs.travis-ci.com/user/encryption-keys/ with valid values
@@ -43,8 +46,7 @@ script: ./travis_build.sh $MODE
 
 notifications:
   email:
-    - bill@artima.com
-    - cheeseng@amaseng.com
+    - robert@robertfries.com
 
 cache:
   directories:

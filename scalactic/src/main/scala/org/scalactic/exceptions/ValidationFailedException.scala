@@ -13,8 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.scalactic
+package org.scalactic.exceptions
 
+/**
+ * Exception that indicates a validation failed.
+ *
+ * <p>
+ * This exception is used to indicate and describe a failed validation by the <code>validating</code> methods
+ * of [[org.scalactic.TrySugar <code>TrySugar</code>]] and [[org.scalactic.FutureSugar <code>FutureSugar</code>]].
+ * </p>
+ *
+ * @param errorMessage a string describing the validation failure
+ */
 case class ValidationFailedException(errorMessage: String) extends Exception(errorMessage) {
   if (errorMessage == null) throw new NullPointerException("errorMessage was null")
 }

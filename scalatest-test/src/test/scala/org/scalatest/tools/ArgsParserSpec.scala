@@ -18,6 +18,7 @@ package org.scalatest.tools
 import java.util.regex.Pattern
 import org.scalatest._
 import java.io.File
+import org.scalactic.exceptions.NullArgumentException
 
 class ArgsParserSpec extends FunSpec {
 
@@ -51,8 +52,8 @@ class ArgsParserSpec extends FunSpec {
       runpathList,
       // SKIP-SCALATESTJS-END
       reportersList,
-      // SKIP-SCALATESTJS-START
       suitesList,
+      // SKIP-SCALATESTJS-START
       runAgainsList,
       junitsList,
       propsList,
@@ -63,8 +64,10 @@ class ArgsParserSpec extends FunSpec {
       concurrentList,
       // SKIP-SCALATESTJS-END
       memberOfList,
+      // SKIP-SCALATESTJS-START
       beginsWithList,
-      //SCALATESTJS-ONLY suffixes
+      // SKIP-SCALATESTJS-END
+      //SCALATESTJS-ONLY beginsWithList
       // SKIP-SCALATESTJS-START
       testNGList,
       suffixes,
@@ -98,13 +101,13 @@ class ArgsParserSpec extends FunSpec {
       assert(spanScaleFactorList == expectedScaleFactorList)
       assert(testSortingReporterTimeoutList == expectedTestSortingReporterTimeoutList)
       assert(slowpokeList == expectedSlowpokeList)
-      // SKIP-SCALATESTJS-END
       if (expectedSuffixes.isEmpty) {
         assert(suffixes.isEmpty)
       } else {
         assert(!suffixes.isEmpty)
         assert(suffixes.get.toString === expectedSuffixes.get.toString)
       }
+      // SKIP-SCALATESTJS-END
     }
 
     intercept[IllegalArgumentException] {
@@ -530,8 +533,8 @@ class ArgsParserSpec extends FunSpec {
       runpathList,
       // SKIP-SCALATESTJS-END
       reportersList,
-      // SKIP-SCALATESTJS-START
       suitesList,
+      // SKIP-SCALATESTJS-START
       runAgainsList,
       junitsList,
       propsList,
@@ -542,8 +545,10 @@ class ArgsParserSpec extends FunSpec {
       concurrentList,
       // SKIP-SCALATESTJS-END
       memberOfList,
+      // SKIP-SCALATESTJS-START
       beginsWithList,
-      //SCALATESTJS-ONLY suffixes
+      // SKIP-SCALATESTJS-END
+      //SCALATESTJS-ONLY beginsWithList
       // SKIP-SCALATESTJS-START
       testNGList,
       suffixes,
@@ -576,13 +581,13 @@ class ArgsParserSpec extends FunSpec {
       assert(chosenStyleList === expectedChosenStyleList)
       assert(spanScaleFactorList == expectedSpanScaleFactorList)
       assert(testSortingReporterTimeoutList == expectedTestSortingReporterTimeoutList)
-      // SKIP-SCALATESTJS-END
       if (expectedSuffixes.isEmpty) {
         assert(suffixes.isEmpty)
       } else {
         assert(!suffixes.isEmpty)
         assert(suffixes.get.toString === expectedSuffixes.get.toString)
       }
+      // SKIP-SCALATESTJS-END
     }
 
     // SKIP-SCALATESTJS-START
@@ -1179,7 +1184,7 @@ class ArgsParserSpec extends FunSpec {
 
   it("parseConfigSet should work correctly") {
 
-    intercept[NullPointerException] {
+    intercept[NullArgumentException] {
       ArgsParser.parseConfigSet(null)
     }
     intercept[IllegalArgumentException] {
@@ -1253,10 +1258,10 @@ class ArgsParserSpec extends FunSpec {
   }
 
   it("parseSuiteArgsIntoClassNameStrings should work correctly") {
-    intercept[NullPointerException] {
+    intercept[NullArgumentException] {
       ArgsParser.parseSuiteArgsIntoNameStrings(null, "-j")
     }
-    intercept[NullPointerException] {
+    intercept[NullArgumentException] {
       ArgsParser.parseSuiteArgsIntoNameStrings(List("-j", null, "-j"), "-j")
     }
     intercept[IllegalArgumentException] {
@@ -1275,10 +1280,10 @@ class ArgsParserSpec extends FunSpec {
 
   // SKIP-SCALATESTJS-START
   it("parseReporterArgsIntoSpecs should work correctly") {
-    intercept[NullPointerException] {
+    intercept[NullArgumentException] {
       ArgsParser.parseReporterArgsIntoConfigurations(null)
     }
-    intercept[NullPointerException] {
+    intercept[NullArgumentException] {
       ArgsParser.parseReporterArgsIntoConfigurations(List("Hello", null, "World"))
     }
     intercept[IllegalArgumentException] {
@@ -1407,13 +1412,13 @@ class ArgsParserSpec extends FunSpec {
   }
 
   it("parseRunpathArgIntoList should work correctly") {
-    intercept[NullPointerException] {
+    intercept[NullArgumentException] {
       ArgsParser.parseRunpathArgIntoList(null)
     }
-    intercept[NullPointerException] {
+    intercept[NullArgumentException] {
       ArgsParser.parseRunpathArgIntoList(List("-R", null))
     }
-    intercept[NullPointerException] {
+    intercept[NullArgumentException] {
       ArgsParser.parseRunpathArgIntoList(List(null, "serviceuitest-1.1beta4.jar myjini http://myhost:9998/myfile.jar"))
     }
     intercept[IllegalArgumentException] {
@@ -1447,10 +1452,10 @@ class ArgsParserSpec extends FunSpec {
   // SKIP-SCALATESTJS-END
 
   it("parsePropertiesArgsIntoMap should work correctly") {
-    intercept[NullPointerException] {
+    intercept[NullArgumentException] {
       ArgsParser.parsePropertiesArgsIntoMap(null)
     }
-    intercept[NullPointerException] {
+    intercept[NullArgumentException] {
       ArgsParser.parsePropertiesArgsIntoMap(List("-Da=b", null))
     }
     intercept[IllegalArgumentException] {
@@ -1493,10 +1498,10 @@ class ArgsParserSpec extends FunSpec {
 
   // SKIP-SCALATESTJS-START
   it("parseSuiteArgs should work correctly") {
-    intercept[NullPointerException] {
+    intercept[NullArgumentException] {
       ArgsParser.parseSuiteArgs(null)
     }
-    intercept[NullPointerException] {
+    intercept[NullArgumentException] {
       ArgsParser.parseSuiteArgs(List("-s", null, "-s", "suite2"))
     }
     intercept[IllegalArgumentException] {

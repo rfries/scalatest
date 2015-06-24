@@ -18,6 +18,8 @@ package org.scalatest.tools
 import java.io.File
 import java.net.URL
 import java.util.regex.Pattern
+import org.scalactic.Requirements._
+import org.scalactic.exceptions.NullArgumentException
 
 import org.scalatest.{ConfigMap, Resources}
 
@@ -160,8 +162,8 @@ private[tools] object ArgsParser {
     val runpath = new ListBuffer[String]()
     // SKIP-SCALATESTJS-END
     val reporters = new ListBuffer[String]()
-    // SKIP-SCALATESTJS-START
     val suites = new ListBuffer[String]()
+    // SKIP-SCALATESTJS-START
     val tryAgains = new ListBuffer[String]()
     val junits = new ListBuffer[String]()
     val props = new ListBuffer[String]()
@@ -289,12 +291,9 @@ private[tools] object ArgsParser {
         //SCALATESTJS-ONLY throw new IllegalArgumentException("Argument not supported by ScalaTest-js: " + s)
       }
       else if (s == "-s") {
-        // SKIP-SCALATESTJS-START
         suites += s
         if (it.hasNext)
           suites += it.next
-        // SKIP-SCALATESTJS-END
-        //SCALATESTJS-ONLY throw new IllegalArgumentException("Argument not supported by ScalaTest-js: " + s)
       }
       else if (s == "-A") {
         // SKIP-SCALATESTJS-START
@@ -305,28 +304,19 @@ private[tools] object ArgsParser {
         //SCALATESTJS-ONLY throw new IllegalArgumentException("Argument not supported by ScalaTest-js: " + s)
       }
       else if (s == "-i") {
-        // SKIP-SCALATESTJS-START
         suites += s
         if (it.hasNext)
           suites += it.next
-        // SKIP-SCALATESTJS-END
-        //SCALATESTJS-ONLY throw new IllegalArgumentException("Argument not supported by ScalaTest-js: " + s)
       }
       else if (s == "-t") {
-        // SKIP-SCALATESTJS-START
         suites += s
         if (it.hasNext)
           suites += it.next
-        // SKIP-SCALATESTJS-END
-        //SCALATESTJS-ONLY throw new IllegalArgumentException("Argument not supported by ScalaTest-js: " + s)
       }
       else if (s == "-z") {
-        // SKIP-SCALATESTJS-START
         suites += s
         if (it.hasNext)
           suites += it.next
-        // SKIP-SCALATESTJS-END
-        //SCALATESTJS-ONLY throw new IllegalArgumentException("Argument not supported by ScalaTest-js: " + s)
       }
       else if (s == "-j") {
         // SKIP-SCALATESTJS-START
@@ -441,8 +431,8 @@ private[tools] object ArgsParser {
       runpath.toList,
       // SKIP-SCALATESTJS-END
       reporters.toList,
-      // SKIP-SCALATESTJS-START
       suites.toList,
+      // SKIP-SCALATESTJS-START
       tryAgains.toList,
       junits.toList,
       props.toList,
@@ -453,12 +443,10 @@ private[tools] object ArgsParser {
       concurrent.toList,
       // SKIP-SCALATESTJS-END
       membersOnly.toList,
+      //SCALATESTJS-ONLY wildcard.toList
+      // SKIP-SCALATESTJS-START
       wildcard.toList,
-      // SKIP-SCALATESTJS-START
       testNGXMLFiles.toList,
-      // SKIP-SCALATESTJS-END
-      //SCALATESTJS-ONLY genSuffixesPattern(suffixes.toList)
-      // SKIP-SCALATESTJS-START
       genSuffixesPattern(suffixes.toList),
       chosenStyles.toList,
       spanScaleFactor.toList,
@@ -471,11 +459,10 @@ private[tools] object ArgsParser {
   // Used to parse -j, -m, and -w args, one of which will be passed as a String as dashArg
   def parseSuiteArgsIntoNameStrings(args: List[String], dashArg: String) = {
 
-    if (args == null)
-      throw new NullPointerException("args was null")
+    requireNonNull(args)
 
     if (args.exists(_ == null))
-      throw new NullPointerException("an arg String was null")
+      throw new NullArgumentException("an arg String was null")
 
     if (dashArg != "-j" && dashArg != "-w" && dashArg != "-m" && dashArg != "-b")
       throw new IllegalArgumentException("dashArg invalid: " + dashArg)
@@ -521,8 +508,7 @@ private[tools] object ArgsParser {
    */
   def parseConfigSet(reporterArg: String): Set[ReporterConfigParam] = {
 
-    if (reporterArg == null)
-      throw new NullPointerException("reporterArg was null")
+    requireNonNull(reporterArg)
 
     if (reporterArg.length < 2)
       throw new IllegalArgumentException("reporterArg < 2")
@@ -596,11 +582,10 @@ private[tools] object ArgsParser {
       }
     }
 
-    if (args == null)
-      throw new NullPointerException("args was null")
+    requireNonNull(args)
 
     if (args.exists(_ == null))
-      throw new NullPointerException("an arg String was null")
+      throw new NullArgumentException("an arg String was null")
 
     if (argTooShort(args)) // TODO: check and print out a user friendly message for this; maybe use an accumulating Or?
       throw new IllegalArgumentException("an arg String was less than 2 in length: " + args)
@@ -1005,11 +990,10 @@ private[tools] object ArgsParser {
   private[scalatest] def parseSuiteArgs(args: List[String]): (List[SuiteParam], List[TestSpec]) = {
     val OpeningDashArgs = Set("-s", "-z", "-t")
 
-    if (args == null)
-      throw new NullPointerException("args was null")
+    requireNonNull(args)
 
     if (args.exists(_ == null))
-      throw new NullPointerException("an arg String was null")
+      throw new NullArgumentException("an arg String was null")
 
     val lb = new ListBuffer[SuiteParam]
     val tb = new ListBuffer[TestSpec]
@@ -1177,11 +1161,10 @@ private[tools] object ArgsParser {
 
   def parseCompoundArgIntoList(args: List[String], expectedDashArg: String): List[String] = {
 
-    if (args == null)
-      throw new NullPointerException("args was null")
+    requireNonNull(args)
 
     if (args.exists(_ == null))
-      throw new NullPointerException("an arg String was null")
+      throw new NullArgumentException("an arg String was null")
 
     if (args.length == 0) {
       List()
@@ -1249,11 +1232,10 @@ private[tools] object ArgsParser {
 
   def parsePropertiesArgsIntoMap(args: List[String]): ConfigMap = {
 
-    if (args == null)
-      throw new NullPointerException("args was null")
+    requireNonNull(args)
 
     if (args.exists(_ == null))
-      throw new NullPointerException("an arg String was null")
+      throw new NullArgumentException("an arg String was null")
 
     if (args.exists(_.indexOf('=') == -1))
       throw new IllegalArgumentException("A -D arg does not contain an equals sign.")

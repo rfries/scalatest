@@ -2148,6 +2148,10 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         assert(l1.exists(_ == 3))
       }
 
+      it("should do nothing when is used to check l1.exists(3 == _)") {
+        assert(l1.exists(3 == _))
+      }
+
       it("should throw TestFailedException with correct message and stack depth when is used to check l1.exists(_ == 5) ") {
         val e = intercept[TestFailedException] {
           assert(l1.exists(_ == 5))
@@ -2167,8 +2171,31 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         e.failedCodeLineNumber should be (Some(thisLineNumber - 14))
       }
 
+      it("should throw TestFailedException with correct message and stack depth when is used to check l1.exists(5 == _) ") {
+        val e = intercept[TestFailedException] {
+          assert(l1.exists(5 == _))
+        }
+        e.message should be (
+          Some(
+            s"""
+               |
+               |assert(l1.exists(5 == _))
+               |       |  |
+               |       |  false
+               |       $l1
+                |""".stripMargin
+          )
+        )
+        e.failedCodeFileName should be (Some(fileName))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 14))
+      }
+
       it("should do nothing when is used to check !l1.exists(_ == 5)") {
         assert(!l1.exists(_ == 5))
+      }
+
+      it("should do nothing when is used to check !l1.exists(5 == _)") {
+        assert(!l1.exists(5 == _))
       }
 
       it("should throw TestFailedException with correct message and stack depth when is used to check !l1.exists(_ == 3)") {
@@ -2191,6 +2218,26 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         e.failedCodeLineNumber should be (Some(thisLineNumber - 15))
       }
 
+      it("should throw TestFailedException with correct message and stack depth when is used to check !l1.exists(3 == _)") {
+        val e = intercept[TestFailedException] {
+          assert(!l1.exists(3 == _))
+        }
+        e.message should be (
+          Some(
+            s"""
+               |
+               |assert(!l1.exists(3 == _))
+               |       ||  |
+               |       ||  true
+               |       |$l1
+               |       false
+               |""".stripMargin
+          )
+        )
+        e.failedCodeFileName should be (Some(fileName))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 15))
+      }
+
       it("should throw TestFailedException with correct message and stack depth when is used to check l1.exists(_ > 3)") {
         val e = intercept[TestFailedException] {
           assert(l1.exists(_ > 3))
@@ -2204,6 +2251,25 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
             |       |  false
             |       $l1
             |""".stripMargin
+          )
+        )
+        e.failedCodeFileName should be (Some(fileName))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 14))
+      }
+
+      it("should throw TestFailedException with correct message and stack depth when is used to check l1.exists(3 < _)") {
+        val e = intercept[TestFailedException] {
+          assert(l1.exists(3 < _))
+        }
+        e.message should be (
+          Some(
+            s"""
+               |
+               |assert(l1.exists(3 < _))
+               |       |  |
+               |       |  false
+               |       $l1
+                |""".stripMargin
           )
         )
         e.failedCodeFileName should be (Some(fileName))
@@ -2471,10 +2537,14 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         e.failedCodeLineNumber should be (Some(thisLineNumber - 14))
       }
 
-      it("should compile when used with Java static method ") {
+      it("should compile when used with Java static method") {
         assertCompiles(
           """
             |assert(System.currentTimeMillis() > 0)
+          """.stripMargin)
+        assertCompiles(
+          """
+            |assert(java.math.BigInteger.ZERO == java.math.BigInteger.ZERO)
           """.stripMargin)
       }
     }
@@ -4526,6 +4596,10 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         assert(l1.exists(_ == 3), "this is a clue")
       }
 
+      it("should do nothing when is used to check l1.exists(3 == _)") {
+        assert(l1.exists(3 == _), "this is a clue")
+      }
+
       it("should throw TestFailedException with correct message and stack depth when is used to check l1.exists(_ == 5) ") {
         val e = intercept[TestFailedException] {
           assert(l1.exists(_ == 5), "this is a clue")
@@ -4545,8 +4619,31 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         e.failedCodeLineNumber should be (Some(thisLineNumber - 14))
       }
 
+      it("should throw TestFailedException with correct message and stack depth when is used to check l1.exists(5 == _) ") {
+        val e = intercept[TestFailedException] {
+          assert(l1.exists(5 == _), "this is a clue")
+        }
+        e.message should be (
+          Some(
+            s"""this is a clue
+               |
+               |assert(l1.exists(5 == _), "this is a clue")
+               |       |  |
+               |       |  false
+               |       $l1
+                |""".stripMargin
+          )
+        )
+        e.failedCodeFileName should be (Some(fileName))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 14))
+      }
+
       it("should do nothing when is used to check !l1.exists(_ == 5)") {
         assert(!l1.exists(_ == 5), "this is a clue")
+      }
+
+      it("should do nothing when is used to check !l1.exists(5 == _)") {
+        assert(!l1.exists(5 == _), "this is a clue")
       }
 
       it("should throw TestFailedException with correct message and stack depth when is used to check !l1.exists(_ == 3)") {
@@ -4569,6 +4666,26 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         e.failedCodeLineNumber should be (Some(thisLineNumber - 15))
       }
 
+      it("should throw TestFailedException with correct message and stack depth when is used to check !l1.exists(3 == _)") {
+        val e = intercept[TestFailedException] {
+          assert(!l1.exists(3 == _), "this is a clue")
+        }
+        e.message should be (
+          Some(
+            s"""this is a clue
+               |
+               |assert(!l1.exists(3 == _), "this is a clue")
+               |       ||  |
+               |       ||  true
+               |       |$l1
+                |       false
+                |""".stripMargin
+          )
+        )
+        e.failedCodeFileName should be (Some(fileName))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 15))
+      }
+
       it("should throw TestFailedException with correct message and stack depth when is used to check l1.exists(_ > 3)") {
         val e = intercept[TestFailedException] {
           assert(l1.exists(_ > 3), "this is a clue")
@@ -4582,6 +4699,25 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
             |       |  false
             |       $l1
             |""".stripMargin
+          )
+        )
+        e.failedCodeFileName should be (Some(fileName))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 14))
+      }
+
+      it("should throw TestFailedException with correct message and stack depth when is used to check l1.exists(3 < _)") {
+        val e = intercept[TestFailedException] {
+          assert(l1.exists(3 < _), "this is a clue")
+        }
+        e.message should be (
+          Some(
+            s"""this is a clue
+               |
+               |assert(l1.exists(3 < _), "this is a clue")
+               |       |  |
+               |       |  false
+               |       $l1
+                |""".stripMargin
           )
         )
         e.failedCodeFileName should be (Some(fileName))
@@ -4853,6 +4989,10 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         assertCompiles(
           """
             |assert(System.currentTimeMillis() > 0, "this is a clue")
+          """.stripMargin)
+        assertCompiles(
+          """
+            |assert(java.math.BigDecimal.ZERO == java.math.BigDecimal.ZERO, "this is a clue")
           """.stripMargin)
       }
     }
@@ -6904,6 +7044,10 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         assume(l1.exists(_ == 3))
       }
 
+      it("should do nothing when is used to check l1.exists(3 == _)") {
+        assume(l1.exists(3 == _))
+      }
+
       it("should throw TestCanceledException with correct message and stack depth when is used to check l1.exists(_ == 5) ") {
         val e = intercept[TestCanceledException] {
           assume(l1.exists(_ == 5))
@@ -6923,8 +7067,31 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         e.failedCodeLineNumber should be (Some(thisLineNumber - 14))
       }
 
+      it("should throw TestCanceledException with correct message and stack depth when is used to check l1.exists(5 == _) ") {
+        val e = intercept[TestCanceledException] {
+          assume(l1.exists(5 == _))
+        }
+        e.message should be (
+          Some(
+            s"""
+               |
+               |assume(l1.exists(5 == _))
+               |       |  |
+               |       |  false
+               |       $l1
+                |""".stripMargin
+          )
+        )
+        e.failedCodeFileName should be (Some(fileName))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 14))
+      }
+
       it("should do nothing when is used to check !l1.exists(_ == 5)") {
         assume(!l1.exists(_ == 5))
+      }
+
+      it("should do nothing when is used to check !l1.exists(5 == _)") {
+        assume(!l1.exists(5 == _))
       }
 
       it("should throw TestCanceledException with correct message and stack depth when is used to check !l1.exists(_ == 3)") {
@@ -6947,6 +7114,26 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         e.failedCodeLineNumber should be (Some(thisLineNumber - 15))
       }
 
+      it("should throw TestCanceledException with correct message and stack depth when is used to check !l1.exists(3 == _)") {
+        val e = intercept[TestCanceledException] {
+          assume(!l1.exists(3 == _))
+        }
+        e.message should be (
+          Some(
+            s"""
+               |
+               |assume(!l1.exists(3 == _))
+               |       ||  |
+               |       ||  true
+               |       |$l1
+                |       false
+                |""".stripMargin
+          )
+        )
+        e.failedCodeFileName should be (Some(fileName))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 15))
+      }
+
       it("should throw TestCanceledException with correct message and stack depth when is used to check l1.exists(_ > 3)") {
         val e = intercept[TestCanceledException] {
           assume(l1.exists(_ > 3))
@@ -6960,6 +7147,25 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
             |       |  false
             |       $l1
             |""".stripMargin
+          )
+        )
+        e.failedCodeFileName should be (Some(fileName))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 14))
+      }
+
+      it("should throw TestCanceledException with correct message and stack depth when is used to check l1.exists(3 < _)") {
+        val e = intercept[TestCanceledException] {
+          assume(l1.exists(3 < _))
+        }
+        e.message should be (
+          Some(
+            s"""
+               |
+               |assume(l1.exists(3 < _))
+               |       |  |
+               |       |  false
+               |       $l1
+                |""".stripMargin
           )
         )
         e.failedCodeFileName should be (Some(fileName))
@@ -7231,6 +7437,10 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         assertCompiles(
           """
             |assume(System.currentTimeMillis() > 0)
+          """.stripMargin)
+        assertCompiles(
+          """
+            |assume(java.math.BigDecimal.ZERO == java.math.BigDecimal.ZERO)
           """.stripMargin)
       }
     }
@@ -9282,6 +9492,10 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         assume(l1.exists(_ == 3), "this is a clue")
       }
 
+      it("should do nothing when is used to check l1.exists(3 == _)") {
+        assume(l1.exists(3 == _), "this is a clue")
+      }
+
       it("should throw TestCanceledException with correct message and stack depth when is used to check l1.exists(_ == 5) ") {
         val e = intercept[TestCanceledException] {
           assume(l1.exists(_ == 5), "this is a clue")
@@ -9301,8 +9515,31 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         e.failedCodeLineNumber should be (Some(thisLineNumber - 14))
       }
 
+      it("should throw TestCanceledException with correct message and stack depth when is used to check l1.exists(5 == _) ") {
+        val e = intercept[TestCanceledException] {
+          assume(l1.exists(5 == _), "this is a clue")
+        }
+        e.message should be (
+          Some(
+            s"""this is a clue
+               |
+               |assume(l1.exists(5 == _), "this is a clue")
+               |       |  |
+               |       |  false
+               |       $l1
+                |""".stripMargin
+          )
+        )
+        e.failedCodeFileName should be (Some(fileName))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 14))
+      }
+
       it("should do nothing when is used to check !l1.exists(_ == 5)") {
         assume(!l1.exists(_ == 5), "this is a clue")
+      }
+
+      it("should do nothing when is used to check !l1.exists(5 == _)") {
+        assume(!l1.exists(5 == _), "this is a clue")
       }
 
       it("should throw TestCanceledException with correct message and stack depth when is used to check !l1.exists(_ == 3)") {
@@ -9325,6 +9562,26 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         e.failedCodeLineNumber should be (Some(thisLineNumber - 15))
       }
 
+      it("should throw TestCanceledException with correct message and stack depth when is used to check !l1.exists(3 == _)") {
+        val e = intercept[TestCanceledException] {
+          assume(!l1.exists(3 == _), "this is a clue")
+        }
+        e.message should be (
+          Some(
+            s"""this is a clue
+               |
+               |assume(!l1.exists(3 == _), "this is a clue")
+               |       ||  |
+               |       ||  true
+               |       |$l1
+                |       false
+                |""".stripMargin
+          )
+        )
+        e.failedCodeFileName should be (Some(fileName))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 15))
+      }
+
       it("should throw TestCanceledException with correct message and stack depth when is used to check l1.exists(_ > 3)") {
         val e = intercept[TestCanceledException] {
           assume(l1.exists(_ > 3), "this is a clue")
@@ -9338,6 +9595,25 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
             |       |  false
             |       $l1
             |""".stripMargin
+          )
+        )
+        e.failedCodeFileName should be (Some(fileName))
+        e.failedCodeLineNumber should be (Some(thisLineNumber - 14))
+      }
+
+      it("should throw TestCanceledException with correct message and stack depth when is used to check l1.exists(3 < _)") {
+        val e = intercept[TestCanceledException] {
+          assume(l1.exists(3 < _), "this is a clue")
+        }
+        e.message should be (
+          Some(
+            s"""this is a clue
+               |
+               |assume(l1.exists(3 < _), "this is a clue")
+               |       |  |
+               |       |  false
+               |       $l1
+                |""".stripMargin
           )
         )
         e.failedCodeFileName should be (Some(fileName))
@@ -9609,6 +9885,10 @@ class DiagrammedAssertionsSpec extends FunSpec with Matchers with DiagrammedAsse
         assertCompiles(
           """
             |assume(System.currentTimeMillis() > 0, "this is a clue")
+          """.stripMargin)
+        assertCompiles(
+          """
+            |assume(java.math.BigDecimal.ZERO == java.math.BigDecimal.ZERO, "this is a clue")
           """.stripMargin)
       }
     }

@@ -16,6 +16,7 @@
 package org.scalatest
 
 import java.lang.reflect.{InvocationTargetException, Method, Modifier}
+import org.scalactic.Requirements._
 
 /**
  * Trait that facilitates the testing of private methods.
@@ -89,12 +90,11 @@ trait PrivateMethodTester {
    * The type parameter, <code>T</code>, is the return type of the private method.
    *
    * @param methodName a <code>Symbol</code> representing the name of the private method to invoke
-   * @throws NullPointerException if <code>methodName</code> is <code>null</code>
+   * @throws NullArgumentException if <code>methodName</code> is <code>null</code>
    */
   final class PrivateMethod[T] private (methodName: Symbol) {
 
-    if (methodName == null)
-      throw new NullPointerException("methodName was null")
+    requireNonNull(methodName)
 
     /**
      * Apply arguments to a private method. This method returns an <code>Invocation</code>
@@ -118,7 +118,7 @@ trait PrivateMethodTester {
      * The type parameter, <code>T</code>, is the return type of the private method.
      *
      * @param methodName a <code>Symbol</code> representing the name of the private method to invoke
-     * @throws NullPointerException if <code>methodName</code> is <code>null</code>
+     * @throws NullArgumentException if <code>methodName</code> is <code>null</code>
      */
     def apply[T](methodName: Symbol) = new PrivateMethod[T](methodName)
   }
@@ -131,11 +131,10 @@ trait PrivateMethodTester {
    *
    * @param methodName a <code>Symbol</code> representing the name of the private method to invoke
    * @param args zero to many arguments to pass to the private method when invoked
-   * @throws NullPointerException if <code>methodName</code> is <code>null</code>
+   * @throws NullArgumentException if <code>methodName</code> is <code>null</code>
    */
   final class Invocation[T](val methodName: Symbol, val args: Any*) {
-    if (methodName == null)
-      throw new NullPointerException
+    requireNonNull(methodName)
   }
 
   /**
@@ -143,8 +142,7 @@ trait PrivateMethodTester {
    */
   final class Invoker(target: AnyRef) {
 
-    if (target == null)
-      throw new NullPointerException
+    requireNonNull(target)
     
     /**
      * Invoke a private method. This method will attempt to invoke via reflection a private method.
@@ -183,20 +181,22 @@ trait PrivateMethodTester {
             // If arg.asInstanceOf[AnyRef] has class java.lang.Integer, this needs to match the paramType Class instance for int
 
             def argMatchesParamType(arg: Any, paramType: Class[_]) = {
-              val anyRefArg = arg.asInstanceOf[AnyRef]
-              paramType match {
-                case java.lang.Long.TYPE => anyRefArg.getClass == classOf[java.lang.Long]
-                case java.lang.Integer.TYPE => anyRefArg.getClass == classOf[java.lang.Integer]
-                case java.lang.Short.TYPE => anyRefArg.getClass == classOf[java.lang.Short]
-                case java.lang.Byte.TYPE => anyRefArg.getClass == classOf[java.lang.Byte]
-                case java.lang.Character.TYPE => anyRefArg.getClass == classOf[java.lang.Character]
-                case java.lang.Double.TYPE => anyRefArg.getClass == classOf[java.lang.Double]
-                case java.lang.Float.TYPE => anyRefArg.getClass == classOf[java.lang.Float]
-                case java.lang.Boolean.TYPE => anyRefArg.getClass == classOf[java.lang.Boolean]
-                case _ => paramType.isAssignableFrom(anyRefArg.getClass)
+              // note that arg might be null, which is assignable to any reference type
+              Option(arg.asInstanceOf[AnyRef]).fold (true) { anyRefArg =>
+                paramType match {
+                  case java.lang.Long.TYPE => anyRefArg.getClass == classOf[java.lang.Long]
+                  case java.lang.Integer.TYPE => anyRefArg.getClass == classOf[java.lang.Integer]
+                  case java.lang.Short.TYPE => anyRefArg.getClass == classOf[java.lang.Short]
+                  case java.lang.Byte.TYPE => anyRefArg.getClass == classOf[java.lang.Byte]
+                  case java.lang.Character.TYPE => anyRefArg.getClass == classOf[java.lang.Character]
+                  case java.lang.Double.TYPE => anyRefArg.getClass == classOf[java.lang.Double]
+                  case java.lang.Float.TYPE => anyRefArg.getClass == classOf[java.lang.Float]
+                  case java.lang.Boolean.TYPE => anyRefArg.getClass == classOf[java.lang.Boolean]
+                  case _ => paramType.isAssignableFrom(anyRefArg.getClass)
+                }
               }
             }
-
+            
             // The args classes need only be assignable to the parameter type. So therefore the parameter type
             // must be assignable *from* the corresponding arg class type.
             val invalidArgs =
@@ -252,6 +252,7 @@ trait PrivateMethodTester {
           for (arg <- args) yield arg match {
             case anyRef: AnyRef => anyRef
             case any: Any => any.asInstanceOf[AnyRef] // Can't use AnyVal in 2.8
+            case null => null
           }
         val privateMethodToInvoke = methodArray(0)
         privateMethodToInvoke.setAccessible(true)
@@ -274,7 +275,7 @@ trait PrivateMethodTester {
    * assertions testing of private methods.
    *
    * @param target the target object on which to invoke a private method.
-   * @throws NullPointerException if <code>target</code> is <code>null</code>.
+   * @throws NullArgumentException if <code>target</code> is <code>null</code>.
    */
   implicit def anyRefToInvoker(target: AnyRef): Invoker = new Invoker(target)
 }
